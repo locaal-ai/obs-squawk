@@ -6,6 +6,7 @@
 #include <mutex>
 #include <vector>
 #include <deque>
+#include <atomic>
 
 #include <obs.h>
 

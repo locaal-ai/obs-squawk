@@ -19,6 +19,7 @@ const char *squawk_source_name(void *unused)
 
 void audio_samples_callback(void *data, const float *samples, int num_samples, int sample_rate)
 {
+	UNUSED_PARAMETER(sample_rate);
 	squawk_source_data *squawk_data = (squawk_source_data *)data;
 	squawk_data->audioThread->pushAudioSamples(
 		std::vector<float>(samples, samples + num_samples));
@@ -102,40 +103,45 @@ obs_properties_t *squawk_source_properties(void *data)
 	// add a callback to update the model
 	obs_property_set_modified_callback2(
 		model,
-		[](void *data, obs_properties *props, obs_property_t *property,
+		[](void *data_, obs_properties *props, obs_property_t *property,
 		   obs_data_t *settings) {
-			squawk_source_data *squawk_data_ = (squawk_source_data *)data;
+			UNUSED_PARAMETER(props);
+			UNUSED_PARAMETER(property);
+
+			squawk_source_data *squawk_data_ = (squawk_source_data *)data_;
 			const char *model_name = obs_data_get_string(settings, "model");
 			obs_log(LOG_INFO, "Selected model: %s", model_name);
 			// find model info by name
 			auto model_info = find_model_info_by_name(model_name);
 			std::string model_folder = find_model_folder(model_info);
-			if (model_folder.empty()) {
-				obs_log(LOG_WARNING, "Model folder not found");
-				download_model_with_ui_dialog(
-					model_info,
-					[model_info, squawk_data_](int download_status,
-								   const std::string &path) {
-						obs_log(LOG_INFO, "Model downloaded: %s",
-							path.c_str());
-						unpack_model(model_info, path);
-						// update the source
-						obs_data_t *source_settings =
-							obs_source_get_settings(
-								squawk_data_->context);
-						obs_source_update(squawk_data_->context,
-								  source_settings);
-						obs_data_release(source_settings);
-					});
-			} else {
+			if (!model_folder.empty()) {
 				obs_log(LOG_INFO, "Model folder found: %s", model_folder.c_str());
+				return true;
 			}
+
+			obs_log(LOG_INFO, "Model folder not found - downloading...");
+			download_model_with_ui_dialog(
+				model_info,
+				[model_info, squawk_data_](int download_status,
+								const std::string &path) {
+					UNUSED_PARAMETER(download_status);
+					obs_log(LOG_INFO, "Model downloaded: %s",
+						path.c_str());
+					unpack_model(model_info, path);
+					// update the source
+					obs_data_t *source_settings =
+						obs_source_get_settings(
+							squawk_data_->context);
+					obs_source_update(squawk_data_->context,
+								source_settings);
+					obs_data_release(source_settings);
+				});
 			return true;
 		},
 		data);
 
 	// add speaker id property
-	obs_property_t *p = obs_properties_add_int(ppts, "speaker_id", "Speaker ID", 0, 100, 1);
+	obs_properties_add_int(ppts, "speaker_id", "Speaker ID", 0, 100, 1);
 
 	// add input source selection dropdown property
 	obs_property_t *input_source = obs_properties_add_list(
@@ -153,9 +159,12 @@ obs_properties_t *squawk_source_properties(void *data)
 	// add button property for generating audio on demand
 	obs_properties_add_button(
 		ppts, "generate_audio", "Generate Audio",
-		[](obs_properties_t *props, obs_property_t *property, void *data) {
+		[](obs_properties_t *props, obs_property_t *property, void *data_) {
+			UNUSED_PARAMETER(props);
+			UNUSED_PARAMETER(property);
+
 			obs_log(LOG_INFO, "Generate Audio button clicked");
-			squawk_source_data *squawk_data_ = (squawk_source_data *)data;
+			squawk_source_data *squawk_data_ = (squawk_source_data *)data_;
 			// get settings from source
 			obs_data_t *settings = obs_source_get_settings(squawk_data_->context);
 			std::string text = obs_data_get_string(settings, "text");
@@ -179,10 +188,13 @@ obs_properties_t *squawk_source_properties(void *data)
 	// add button for deleting all cached models
 	obs_properties_add_button(
 		ppts, "delete_models", "Delete Cached Models",
-		[](obs_properties_t *props, obs_property_t *property, void *data) {
+		[](obs_properties_t *props, obs_property_t *property, void *data_) {
+			UNUSED_PARAMETER(props);
+			UNUSED_PARAMETER(property);
+
 			obs_log(LOG_INFO, "Delete Cached Models button clicked");
 			delete_cached_models();
-			squawk_source_data *squawk_data_ = (squawk_source_data *)data;
+			squawk_source_data *squawk_data_ = (squawk_source_data *)data_;
 			// get settings from source
 			obs_data_t *settings = obs_source_get_settings(squawk_data_->context);
 			// set the model to the default model
@@ -226,7 +238,18 @@ void squawk_source_update(void *data, obs_data_t *settings)
 	}
 }
 
-void squawk_source_activate(void *data) {}
-void squawk_source_deactivate(void *data) {}
-void squawk_source_show(void *data) {}
-void squawk_source_hide(void *data) {}
+void squawk_source_activate(void *data) {
+	UNUSED_PARAMETER(data);
+}
+
+void squawk_source_deactivate(void *data) {
+	UNUSED_PARAMETER(data);
+}
+
+void squawk_source_show(void *data) {
+	UNUSED_PARAMETER(data);
+}
+
+void squawk_source_hide(void *data) {
+	UNUSED_PARAMETER(data);
+}
