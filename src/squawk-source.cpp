@@ -14,6 +14,7 @@
 
 const char *squawk_source_name(void *unused)
 {
+	UNUSED_PARAMETER(unused);
 	return "Squawk Text-to-Speech";
 }
 
