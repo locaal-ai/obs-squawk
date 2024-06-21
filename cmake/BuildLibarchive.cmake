@@ -44,18 +44,17 @@ if(WIN32)
   endif()
 
   target_link_libraries(libarchive INTERFACE libarchive::libarchive libbzip2)
-elseif(APPLE)
-  # Homebrew ships libarchive keg only, include dirs have to be set manually
-  execute_process(
-    COMMAND brew --prefix libarchive
-    OUTPUT_VARIABLE LIBARCHIVE_PREFIX
-    OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ERROR_IS_FATAL ANY)
-  set(LibArchive_INCLUDE_DIR "${LIBARCHIVE_PREFIX}/include")
-  find_package(LibArchive REQUIRED)
+else()
+  if(APPLE)
+    # Homebrew ships libarchive keg only, include dirs have to be set manually
+    execute_process(
+      COMMAND brew --prefix libarchive
+      OUTPUT_VARIABLE LIBARCHIVE_PREFIX
+      OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ERROR_IS_FATAL ANY)
+    set(LibArchive_INCLUDE_DIR "${LIBARCHIVE_PREFIX}/include")
+    set(LibArchive_LIBRARIES "${LIBARCHIVE_PREFIX}/lib/libarchive.dylib")
+  endif()
 
-  add_library(libarchive INTERFACE)
-  target_link_libraries(libarchive INTERFACE LibArchive::LibArchive)
-else() # Linux - use system libraries
   find_package(LibArchive REQUIRED)
   find_package(BZip2 REQUIRED)
 

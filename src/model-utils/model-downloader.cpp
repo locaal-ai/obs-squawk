@@ -87,7 +87,11 @@ static int copy_data(struct archive *ar, struct archive *aw)
 			return (ARCHIVE_OK);
 		if (r < ARCHIVE_OK)
 			return (r);
+#ifdef WIN32
 		r = archive_write_data_block(aw, buff, size, offset);
+#else
+		r = (int)archive_write_data_block(aw, buff, (int)size, offset);
+#endif
 		if (r < ARCHIVE_OK) {
 			obs_log(LOG_ERROR, "Error writing data: %s", archive_error_string(aw));
 			return (r);
@@ -189,7 +193,7 @@ void extract(const char *filename, const char *dirname)
 #ifdef WIN32
 				r = archive_write_data_block(ext, buff, size, offset);
 #else
-				r = archive_write_data_block(ext, buff, (int)size, offset);
+				r = (int)archive_write_data_block(ext, buff, (int)size, offset);
 #endif
 				if (r != ARCHIVE_OK)
 					throw std::runtime_error(archive_error_string(ext));
