@@ -10,19 +10,6 @@ elseif(APPLE)
       "${SHERPA_ONNX_BASE_URL}/sherpa-onnx-v${SHERPA_ONNX_VERSION}-osx-universal2-shared.tar.bz2")
 else()
   set(SHERPA_ONNX_DOWNLOAD_URL "${SHERPA_ONNX_BASE_URL}/sherpa-onnx-v${SHERPA_ONNX_VERSION}-linux-x64-shared.tar.bz2")
-  # include(ExternalProject)
-
-  # # Set the repository URL and branch set(SHERPA_ONNX_URL
-  # "https://github.com/k2-fsa/sherpa-onnx/archive/refs/tags/v${SHERPA_ONNX_VERSION}.tar.gz")
-
-  # # Configure the ExternalProject ExternalProject_Add( sherpa-onnx-build URL ${SHERPA_ONNX_URL} BUILD_COMMAND
-  # ${CMAKE_COMMAND} --build <BINARY_DIR> --config ${CMAKE_BUILD_TYPE} CMAKE_GENERATOR ${CMAKE_GENERATOR}
-  # INSTALL_COMMAND ${CMAKE_COMMAND} --install <BINARY_DIR> --config ${CMAKE_BUILD_TYPE} CMAKE_ARGS
-  # -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR> -DSHERPA_ONNX_ENABLE_PORTAUDIO=OFF -DSHERPA_ONNX_ENABLE_PYTHON=OFF
-  # -DSHERPA_ONNX_ENABLE_TESTS=OFF -DSHERPA_ONNX_ENABLE_WEBSOCKET=OFF -DSHERPA_ONNX_ENABLE_BINARY=OFF
-  # -DBUILD_SHARED_LIBS=ON)
-
-  # # Add the include directories ExternalProject_Get_Property(sherpa-onnx-build INSTALL_DIR)
 endif()
 
 FetchContent_Declare(sherpa-onnx-build URL ${SHERPA_ONNX_DOWNLOAD_URL})
