@@ -44,7 +44,15 @@ if(WIN32)
   endif()
 
   target_link_libraries(libarchive INTERFACE libarchive::libarchive libbzip2)
-else() # Linux and MacOS - use system libraries
+elseif(APPLE)
+  # find libarchive using pkg-config
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(LIBARCHIVE REQUIRED libarchive)
+
+  add_library(libarchive INTERFACE)
+  target_link_libraries(libarchive INTERFACE ${LIBARCHIVE_LIBRARIES})
+  target_include_directories(libarchive INTERFACE ${LIBARCHIVE_INCLUDE_DIRS})
+else() # Linux - use system libraries
   find_package(LibArchive REQUIRED)
   find_package(BZip2 REQUIRED)
 

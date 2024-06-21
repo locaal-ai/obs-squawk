@@ -6,7 +6,7 @@ std::string phonetic_equivalent(std::string letter)
 {
 	// return the phonetic equivalent of the letter
 	// e.g. "a" -> "aei", "b" -> "bee", "c" -> "see", etc.
-	letter = tolower(letter[0]);
+	letter = tolower((int)letter[0]);
 	if (letter == "a") {
 		return "aei";
 	} else if (letter == "b") {

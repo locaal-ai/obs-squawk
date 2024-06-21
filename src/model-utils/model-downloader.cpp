@@ -78,7 +78,11 @@ static int copy_data(struct archive *ar, struct archive *aw)
 {
 	int r;
 	const void *buff;
+#ifdef WIN32
 	size_t size;
+#else
+	int size;
+#endif
 	la_int64_t offset;
 
 	for (;;) {
@@ -175,7 +179,11 @@ void extract(const char *filename, const char *dirname)
 				archive_error_string(ext));
 		} else {
 			const void *buff;
+#ifdef WIN32
 			size_t size;
+#else
+			int size;
+#endif
 			la_int64_t offset;
 
 			// Read data blocks from the input archive and write to the output
