@@ -22,8 +22,6 @@ set(SHERPA_LIBS
     espeak-ng
     kaldi-decoder-core
     kaldi-native-fbank-core
-    onnxruntime_providers_shared
-    onnxruntime
     piper_phonemize
     sherpa-onnx-c-api
     sherpa-onnx-core
@@ -52,6 +50,15 @@ foreach(lib ${SHERPA_LIBS})
             DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/obs-plugins/64bit)
   endif()
 endforeach()
+
+if(WIN32)
+  # install the onnxruntime dlls to the project release directory
+  install(FILES ${INSTALL_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}onnxruntime${CMAKE_SHARED_LIBRARY_SUFFIX}
+          DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/obs-plugins/64bit)
+  install(
+    FILES ${INSTALL_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}onnxruntime_providers_shared${CMAKE_SHARED_LIBRARY_SUFFIX}
+    DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/obs-plugins/64bit)
+endif()
 
 # Add the sherpa-onnx target with all the dependencies
 add_library(sherpa-onnx INTERFACE)
