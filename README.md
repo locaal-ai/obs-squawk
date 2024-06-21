@@ -14,7 +14,7 @@ With this plugin, you can generate speech on the fly and in real-time inside OBS
 
 ## Installation
 
-1. Download the latest release from the [Releases](https://github.com/your-repo/obs-squawk/releases) page.
+1. Download the latest release from the [Releases](https://github.com/occ-ai/obs-squawk/releases) page.
 2. Run the installer or extract the files from the zip to your OBS plugins directory.
 3. Restart OBS to load the new plugin.
 
