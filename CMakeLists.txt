@@ -34,6 +34,38 @@ if(ENABLE_QT)
                AUTORCC ON)
 endif()
 
-target_sources(${CMAKE_PROJECT_NAME} PRIVATE src/plugin-main.c)
+# build cURL
+set(USE_SYSTEM_CURL
+    OFF
+    CACHE STRING "Use system cURL")
+if(USE_SYSTEM_CURL)
+  find_package(CURL REQUIRED)
+  target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE "${CURL_LIBRARIES}")
+  target_include_directories(${CMAKE_PROJECT_NAME} SYSTEM PUBLIC "${CURL_INCLUDE_DIRS}")
+else()
+  include(cmake/BuildMyCurl.cmake)
+  target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE libcurl)
+endif()
+
+# build sherpa-onnx
+include(cmake/BuildSherpaOnnx.cmake)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE sherpa-onnx)
+
+# build libarchive
+include(cmake/BuildLibarchive.cmake)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE libarchive)
+
+target_sources(${CMAKE_PROJECT_NAME} PRIVATE 
+  src/input-thread.cpp
+  src/model-utils/model-downloader-ui.cpp
+  src/model-utils/model-downloader.cpp
+  src/model-utils/model-find-utils.cpp
+  src/model-utils/model-infos.cpp
+  src/plugin-main.c 
+  src/sherpa-tts/sherpa-tts.cpp src/audio-thread.cpp 
+  src/squawk-source.c 
+  src/squawk-source.cpp
+  src/tts-utils.cpp
+  )
 
 set_target_properties_plugin(${CMAKE_PROJECT_NAME} PROPERTIES OUTPUT_NAME ${_name})
