@@ -33,7 +33,8 @@ void init_sherpa_tts_context(sherpa_tts_context &context,
 	std::string model_folder = find_model_folder(model_info);
 
 	if (model_folder.empty()) {
-		obs_log(LOG_ERROR, "Model folder not found for model: %s", context.model_name);
+		obs_log(LOG_ERROR, "Model folder not found for model: %s",
+			context.model_name.c_str());
 		context.tts = nullptr;
 		return;
 	}
