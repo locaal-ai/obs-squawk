@@ -55,17 +55,18 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE sherpa-onnx)
 include(cmake/BuildLibarchive.cmake)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE libarchive)
 
-target_sources(${CMAKE_PROJECT_NAME} PRIVATE 
-  src/input-thread.cpp
-  src/model-utils/model-downloader-ui.cpp
-  src/model-utils/model-downloader.cpp
-  src/model-utils/model-find-utils.cpp
-  src/model-utils/model-infos.cpp
-  src/plugin-main.c 
-  src/sherpa-tts/sherpa-tts.cpp src/audio-thread.cpp 
-  src/squawk-source.c 
-  src/squawk-source.cpp
-  src/tts-utils.cpp
-  )
+target_sources(
+  ${CMAKE_PROJECT_NAME}
+  PRIVATE src/input-thread.cpp
+          src/model-utils/model-downloader-ui.cpp
+          src/model-utils/model-downloader.cpp
+          src/model-utils/model-find-utils.cpp
+          src/model-utils/model-infos.cpp
+          src/plugin-main.c
+          src/sherpa-tts/sherpa-tts.cpp
+          src/audio-thread.cpp
+          src/squawk-source.c
+          src/squawk-source.cpp
+          src/tts-utils.cpp)
 
 set_target_properties_plugin(${CMAKE_PROJECT_NAME} PROPERTIES OUTPUT_NAME ${_name})
