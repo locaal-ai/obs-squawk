@@ -45,13 +45,16 @@ if(WIN32)
 
   target_link_libraries(libarchive INTERFACE libarchive::libarchive libbzip2)
 elseif(APPLE)
-  # find libarchive using pkg-config
-  find_package(PkgConfig REQUIRED)
-  pkg_check_modules(LIBARCHIVE REQUIRED libarchive)
+  # Homebrew ships libarchive keg only, include dirs have to be set manually
+  execute_process(
+    COMMAND brew --prefix libarchive
+    OUTPUT_VARIABLE LIBARCHIVE_PREFIX
+    OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ERROR_IS_FATAL ANY)
+  set(LibArchive_INCLUDE_DIR "${LIBARCHIVE_PREFIX}/include")
+  find_package(LibArchive REQUIRED)
 
   add_library(libarchive INTERFACE)
-  target_link_libraries(libarchive INTERFACE ${LIBARCHIVE_LIBRARIES})
-  target_include_directories(libarchive INTERFACE ${LIBARCHIVE_INCLUDE_DIRS})
+  target_link_libraries(libarchive INTERFACE LibArchive::LibArchive)
 else() # Linux - use system libraries
   find_package(LibArchive REQUIRED)
   find_package(BZip2 REQUIRED)

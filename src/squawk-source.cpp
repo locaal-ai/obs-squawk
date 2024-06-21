@@ -121,19 +121,15 @@ obs_properties_t *squawk_source_properties(void *data)
 
 			obs_log(LOG_INFO, "Model folder not found - downloading...");
 			download_model_with_ui_dialog(
-				model_info,
-				[model_info, squawk_data_](int download_status,
-								const std::string &path) {
+				model_info, [model_info, squawk_data_](int download_status,
+								       const std::string &path) {
 					UNUSED_PARAMETER(download_status);
-					obs_log(LOG_INFO, "Model downloaded: %s",
-						path.c_str());
+					obs_log(LOG_INFO, "Model downloaded: %s", path.c_str());
 					unpack_model(model_info, path);
 					// update the source
 					obs_data_t *source_settings =
-						obs_source_get_settings(
-							squawk_data_->context);
-					obs_source_update(squawk_data_->context,
-								source_settings);
+						obs_source_get_settings(squawk_data_->context);
+					obs_source_update(squawk_data_->context, source_settings);
 					obs_data_release(source_settings);
 				});
 			return true;
@@ -238,18 +234,22 @@ void squawk_source_update(void *data, obs_data_t *settings)
 	}
 }
 
-void squawk_source_activate(void *data) {
+void squawk_source_activate(void *data)
+{
 	UNUSED_PARAMETER(data);
 }
 
-void squawk_source_deactivate(void *data) {
+void squawk_source_deactivate(void *data)
+{
 	UNUSED_PARAMETER(data);
 }
 
-void squawk_source_show(void *data) {
+void squawk_source_show(void *data)
+{
 	UNUSED_PARAMETER(data);
 }
 
-void squawk_source_hide(void *data) {
+void squawk_source_hide(void *data)
+{
 	UNUSED_PARAMETER(data);
 }
