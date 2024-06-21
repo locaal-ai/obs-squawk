@@ -1,4 +1,14 @@
-# OBS Squawk - Real-time Text-to-Speech Engine
+# OBS Squawk - Real-time Versatile Text-to-Speech Source
+
+<div align="center">
+
+[![GitHub](https://img.shields.io/github/license/occ-ai/obs-squawk)](https://github.com/occ-ai/obs-squawl/blob/main/LICENSE)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/occ-ai/obs-squawk/push.yaml)](https://github.com/occ-ai/obs-squawk/actions/workflows/push.yaml)
+[![Total downloads](https://img.shields.io/github/downloads/occ-ai/obs-squawk/total)](https://github.com/occ-ai/obs-squawk/releases)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/occ-ai/obs-squawk)](https://github.com/occ-ai/obs-squawk/releases)
+[![Discord](https://img.shields.io/discord/1200229425141252116)](https://discord.gg/KbjGU2vvUz)
+
+</div>
 
 The OBS Squawk plugin adds powerful voice cloning capabilities to OBS by leveraging sherpa-onnx. 
 With this plugin, you can generate speech on the fly and in real-time inside OBS without any external services or access to the network.
@@ -139,15 +149,15 @@ We welcome contributions! Please fork the repository and submit pull requests. F
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GPLv2 License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgements
 
-- [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) for providing the underlying voice synthesis technology.
+- [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) for providing the underlying voice synthesis technology and pretrained models.
 
 ## Support
 
-For support and troubleshooting, please visit our [GitHub Issues](https://github.com/occ-ai/obs-squawk/issues) page.
+For support and troubleshooting, please visit our [GitHub Issues](https://github.com/occ-ai/obs-squawk/issues) page or reach out on [our Discord server](https://discord.gg/s5K9RwPV7w).
 
 ---
 
