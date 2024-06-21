@@ -22,6 +22,8 @@ set(SHERPA_LIBS
     espeak-ng
     kaldi-decoder-core
     kaldi-native-fbank-core
+    onnxruntime_providers_shared
+    onnxruntime
     piper_phonemize
     sherpa-onnx-c-api
     sherpa-onnx-core

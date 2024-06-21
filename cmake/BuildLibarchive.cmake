@@ -12,34 +12,31 @@ if(WIN32)
   set_property(TARGET libbzip2 PROPERTY IMPORTED_LOCATION ${bzip2_SOURCE_DIR}/libbz2-static.lib)
 
   set(LIBARCHIVE_VERSION 3.7.4)
-  set(LIBARCHIVE_URL "https://github.com/libarchive/libarchive/archive/v${LIBARCHIVE_VERSION}.tar.gz")
+  set(LIBARCHIVE_URL
+      "https://github.com/libarchive/libarchive/releases/download/v${LIBARCHIVE_VERSION}/libarchive-v${LIBARCHIVE_VERSION}-amd64.zip"
+  )
 
-  ExternalProject_Add(
-    libarchive-build
-    URL ${LIBARCHIVE_URL}
-    CMAKE_GENERATOR ${CMAKE_GENERATOR}
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR> -DENABLE_TEST=OFF -DBUILD_SHARED_LIBS=ON
-    BUILD_COMMAND ${CMAKE_COMMAND} --build <BINARY_DIR> --config ${CMAKE_BUILD_TYPE}
-    INSTALL_COMMAND ${CMAKE_COMMAND} --build <BINARY_DIR> --config ${CMAKE_BUILD_TYPE} --target install)
-
-  # get the install directory
-  ExternalProject_Get_Property(libarchive-build INSTALL_DIR)
+  include(FetchContent)
+  FetchContent_Declare(libarchive-build URL ${LIBARCHIVE_URL})
+  FetchContent_MakeAvailable(libarchive-build)
 
   # create an INTERFACE library to link against
   add_library(libarchive INTERFACE)
   add_dependencies(libarchive libarchive-build)
-  target_include_directories(libarchive INTERFACE ${INSTALL_DIR}/include)
+  target_include_directories(libarchive INTERFACE ${libarchive-build_SOURCE_DIR}/include)
 
   add_library(libarchive::libarchive SHARED IMPORTED)
   set_property(
     TARGET libarchive::libarchive
-    PROPERTY IMPORTED_LOCATION ${INSTALL_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX})
+    PROPERTY IMPORTED_LOCATION
+             ${libarchive-build_SOURCE_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX})
   add_dependencies(libarchive::libarchive libarchive-build)
   if(WIN32)
     set_property(
       TARGET libarchive::libarchive
-      PROPERTY IMPORTED_IMPLIB ${INSTALL_DIR}/lib/${CMAKE_IMPORT_LIBRARY_PREFIX}archive${CMAKE_IMPORT_LIBRARY_SUFFIX})
-    install(FILES ${INSTALL_DIR}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX}
+      PROPERTY IMPORTED_IMPLIB
+               ${libarchive-build_SOURCE_DIR}/lib/${CMAKE_IMPORT_LIBRARY_PREFIX}archive${CMAKE_IMPORT_LIBRARY_SUFFIX})
+    install(FILES ${libarchive-build_SOURCE_DIR}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX}
             DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/obs-plugins/64bit)
   endif()
 
