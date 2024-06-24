@@ -31,11 +31,19 @@ set(SHERPA_LIBS
     ssentencepiece_core
     ucd)
 
+if(WIN32)
+  set(SHARED_LIBRARY_DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/obs-plugins/64bit)
+elseif(APPLE)
+  set(SHARED_LIBRARY_DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/${PROJECT_NAME}.plugin/Contents/Frameworks)
+else()
+  set(SHARED_LIBRARY_DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/${PROJECT_NAME}/64bit)
+endif()
+
 foreach(lib ${SHERPA_LIBS})
   add_library(${lib} SHARED IMPORTED)
-  set_property(
-    TARGET ${lib} PROPERTY IMPORTED_LOCATION
-                           ${INSTALL_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}${lib}${CMAKE_SHARED_LIBRARY_SUFFIX})
+  set(SHARED_LIBRARY_FILE_NAME ${CMAKE_SHARED_LIBRARY_PREFIX}${lib}${CMAKE_SHARED_LIBRARY_SUFFIX})
+  set(SHARED_LIBRARY_FILE_LOCATION ${INSTALL_DIR}/lib/${SHARED_LIBRARY_FILE_NAME})
+  set_property(TARGET ${lib} PROPERTY IMPORTED_LOCATION ${SHARED_LIBRARY_FILE_LOCATION})
   # add implib for windows, except for onnxruntime and onnxruntime_providers_shared
   if(WIN32)
     set_property(
@@ -44,20 +52,34 @@ foreach(lib ${SHERPA_LIBS})
   endif()
   set_property(TARGET ${lib} PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
-  # install the dll to the project release directory: ${CMAKE_BINARY_DIR}/$<CONFIG>/obs-plugins/64bit
-  if(WIN32)
-    install(FILES ${INSTALL_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}${lib}${CMAKE_SHARED_LIBRARY_SUFFIX}
-            DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/obs-plugins/64bit)
+  # install the shared lib to the project release directory
+  install(FILES ${SHARED_LIBRARY_FILE_LOCATION} DESTINATION ${SHARED_LIBRARY_DESTINATION})
+  if(APPLE)
+    add_custom_command(
+      TARGET "${CMAKE_PROJECT_NAME}"
+      POST_BUILD
+      COMMAND ${CMAKE_INSTALL_NAME_TOOL} -change "@rpath/${SHARED_LIBRARY_FILE_NAME}"
+              "@loader_path/../Frameworks/${SHARED_LIBRARY_FILE_NAME}" $<TARGET_FILE:${CMAKE_PROJECT_NAME}>)
   endif()
 endforeach()
 
+# install the onnxruntime shared libs to the project release directory
+install(FILES ${INSTALL_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}onnxruntime${CMAKE_SHARED_LIBRARY_SUFFIX}
+        DESTINATION ${SHARED_LIBRARY_DESTINATION})
 if(WIN32)
-  # install the onnxruntime dlls to the project release directory
-  install(FILES ${INSTALL_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}onnxruntime${CMAKE_SHARED_LIBRARY_SUFFIX}
-          DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/obs-plugins/64bit)
   install(
     FILES ${INSTALL_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}onnxruntime_providers_shared${CMAKE_SHARED_LIBRARY_SUFFIX}
-    DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/obs-plugins/64bit)
+    DESTINATION ${SHARED_LIBRARY_DESTINATION})
+endif()
+if(APPLE)
+  foreach(lib libpiper_phonemize.1.dylib libpiper_phonemize.1.2.0.dylib libonnxruntime.1.17.1.dylib)
+    install(FILES ${INSTALL_DIR}/lib/${lib} DESTINATION ${SHARED_LIBRARY_DESTINATION})
+    add_custom_command(
+      TARGET "${CMAKE_PROJECT_NAME}"
+      POST_BUILD
+      COMMAND ${CMAKE_INSTALL_NAME_TOOL} -change "@rpath/${lib}" "@loader_path/../Frameworks/${lib}"
+              $<TARGET_FILE:${CMAKE_PROJECT_NAME}>)
+  endforeach()
 endif()
 
 # Add the sherpa-onnx target with all the dependencies
