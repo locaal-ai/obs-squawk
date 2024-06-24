@@ -15,6 +15,11 @@ void squawk_source_deactivate(void *data);
 void squawk_source_show(void *data);
 void squawk_source_hide(void *data);
 
+const char *const PLUGIN_INFO_TEMPLATE =
+	"<a href=\"https://github.com/occ-ai/obs-squawk/\">Squawk</a> (%s) by "
+	"<a href=\"https://github.com/occ-ai\">OCC AI</a> ❤️ "
+	"<a href=\"https://www.patreon.com/RoyShilkrot\">Support & Follow</a>";
+
 #ifdef __cplusplus
 }
 #endif

@@ -204,6 +204,11 @@ obs_properties_t *squawk_source_properties(void *data)
 	// add boolean propery for enabling phonetic transcription
 	obs_properties_add_bool(ppts, "phonetic_transcription", "Phonetic Transcription");
 
+	// add plugin info
+	char small_info[256];
+	snprintf(small_info, sizeof(small_info), PLUGIN_INFO_TEMPLATE, PLUGIN_VERSION);
+	obs_properties_add_text(ppts, "plugin_info", small_info, OBS_TEXT_INFO);
+
 	return ppts;
 }
 

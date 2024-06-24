@@ -11,6 +11,10 @@ if(WIN32)
   target_include_directories(libbzip2 INTERFACE ${bzip2_SOURCE_DIR})
   set_property(TARGET libbzip2 PROPERTY IMPORTED_LOCATION ${bzip2_SOURCE_DIR}/libbz2-static.lib)
 
+  # get openssl precompiled from https://wiki.overbyte.eu/arch/openssl-1.1.1w-win64.zip
+  FetchContent_Declare(openssl URL "https://wiki.overbyte.eu/arch/openssl-1.1.1w-win64.zip")
+  FetchContent_MakeAvailable(openssl)
+
   set(LIBARCHIVE_VERSION 3.7.4)
   set(LIBARCHIVE_URL
       "https://github.com/libarchive/libarchive/releases/download/v${LIBARCHIVE_VERSION}/libarchive-v${LIBARCHIVE_VERSION}-amd64.zip"
@@ -31,14 +35,16 @@ if(WIN32)
     PROPERTY IMPORTED_LOCATION
              ${libarchive-build_SOURCE_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX})
   add_dependencies(libarchive::libarchive libarchive-build)
-  if(WIN32)
-    set_property(
-      TARGET libarchive::libarchive
-      PROPERTY IMPORTED_IMPLIB
-               ${libarchive-build_SOURCE_DIR}/lib/${CMAKE_IMPORT_LIBRARY_PREFIX}archive${CMAKE_IMPORT_LIBRARY_SUFFIX})
-    install(FILES ${libarchive-build_SOURCE_DIR}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX}
-            DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/obs-plugins/64bit)
-  endif()
+
+  set_property(
+    TARGET libarchive::libarchive
+    PROPERTY IMPORTED_IMPLIB
+             ${libarchive-build_SOURCE_DIR}/lib/${CMAKE_IMPORT_LIBRARY_PREFIX}archive${CMAKE_IMPORT_LIBRARY_SUFFIX})
+
+  install(FILES ${libarchive-build_SOURCE_DIR}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}archive${CMAKE_SHARED_LIBRARY_SUFFIX}
+          DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/obs-plugins/64bit)
+  install(FILES ${openssl_SOURCE_DIR}/libcrypto-1_1-x64${CMAKE_SHARED_LIBRARY_SUFFIX}
+          DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/obs-plugins/64bit)
 
   target_link_libraries(libarchive INTERFACE libarchive::libarchive libbzip2)
 else()
