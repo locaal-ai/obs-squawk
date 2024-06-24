@@ -55,6 +55,9 @@ foreach(lib ${SHERPA_LIBS})
   # install the shared lib to the project release directory
   install(FILES ${SHARED_LIBRARY_FILE_LOCATION} DESTINATION ${SHARED_LIBRARY_DESTINATION})
   if(APPLE)
+    target_sources(${CMAKE_PROJECT_NAME} PRIVATE "${SHARED_LIBRARY_FILE_LOCATION}")
+    set_property(SOURCE "${SHARED_LIBRARY_FILE_LOCATION}" PROPERTY MACOSX_PACKAGE_LOCATION Frameworks)
+    source_group("Frameworks" FILES "${SHARED_LIBRARY_FILE_LOCATION}")
     add_custom_command(
       TARGET "${CMAKE_PROJECT_NAME}"
       POST_BUILD
@@ -72,13 +75,18 @@ if(WIN32)
     DESTINATION ${SHARED_LIBRARY_DESTINATION})
 endif()
 if(APPLE)
-  foreach(lib libpiper_phonemize.1.dylib libpiper_phonemize.1.2.0.dylib libonnxruntime.1.17.1.dylib)
-    install(FILES ${INSTALL_DIR}/lib/${lib} DESTINATION ${SHARED_LIBRARY_DESTINATION})
+  foreach(SHARED_LIBRARY_FILE_NAME libpiper_phonemize.1.dylib libpiper_phonemize.1.2.0.dylib
+                                   libonnxruntime.1.17.1.dylib)
+    set(SHARED_LIBRARY_FILE_LOCATION ${INSTALL_DIR}/lib/${SHARED_LIBRARY_FILE_NAME})
+    install(FILES ${SHARED_LIBRARY_FILE_LOCATION} DESTINATION ${SHARED_LIBRARY_DESTINATION})
+    target_sources(${CMAKE_PROJECT_NAME} PRIVATE "${SHARED_LIBRARY_FILE_LOCATION}")
+    set_property(SOURCE "${SHARED_LIBRARY_FILE_LOCATION}" PROPERTY MACOSX_PACKAGE_LOCATION Frameworks)
+    source_group("Frameworks" FILES "${SHARED_LIBRARY_FILE_LOCATION}")
     add_custom_command(
       TARGET "${CMAKE_PROJECT_NAME}"
       POST_BUILD
-      COMMAND ${CMAKE_INSTALL_NAME_TOOL} -change "@rpath/${lib}" "@loader_path/../Frameworks/${lib}"
-              $<TARGET_FILE:${CMAKE_PROJECT_NAME}>)
+      COMMAND ${CMAKE_INSTALL_NAME_TOOL} -change "@rpath/${SHARED_LIBRARY_FILE_NAME}"
+              "@loader_path/../Frameworks/${SHARED_LIBRARY_FILE_NAME}" $<TARGET_FILE:${CMAKE_PROJECT_NAME}>)
   endforeach()
 endif()
 
