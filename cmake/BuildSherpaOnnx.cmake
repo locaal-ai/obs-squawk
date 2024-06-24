@@ -52,9 +52,8 @@ foreach(lib ${SHERPA_LIBS})
   endif()
   set_property(TARGET ${lib} PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${INSTALL_DIR}/include)
 
-  # install the shared lib to the project release directory
-  install(FILES ${SHARED_LIBRARY_FILE_LOCATION} DESTINATION ${SHARED_LIBRARY_DESTINATION})
   if(APPLE)
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE "${SHARED_LIBRARY_FILE_LOCATION}")
     target_sources(${CMAKE_PROJECT_NAME} PRIVATE "${SHARED_LIBRARY_FILE_LOCATION}")
     set_property(SOURCE "${SHARED_LIBRARY_FILE_LOCATION}" PROPERTY MACOSX_PACKAGE_LOCATION Frameworks)
     source_group("Frameworks" FILES "${SHARED_LIBRARY_FILE_LOCATION}")
@@ -63,6 +62,9 @@ foreach(lib ${SHERPA_LIBS})
       POST_BUILD
       COMMAND ${CMAKE_INSTALL_NAME_TOOL} -change "@rpath/${SHARED_LIBRARY_FILE_NAME}"
               "@loader_path/../Frameworks/${SHARED_LIBRARY_FILE_NAME}" $<TARGET_FILE:${CMAKE_PROJECT_NAME}>)
+  else()
+    # install the shared lib to the project release directory
+    install(FILES ${SHARED_LIBRARY_FILE_LOCATION} DESTINATION ${SHARED_LIBRARY_DESTINATION})
   endif()
 endforeach()
 
