@@ -34,6 +34,7 @@ void *squawk_source_create(obs_data_t *settings, obs_source_t *source)
 	squawk_source_data *squawk_data = new (data) squawk_source_data();
 
 	squawk_data->tts_context.callback_data = squawk_data;
+	squawk_data->tts_context.model_name = "";
 
 	squawk_data->context = source;
 	squawk_data->audioThread = std::make_unique<AudioThread>(source);
@@ -127,6 +128,8 @@ obs_properties_t *squawk_source_properties(void *data)
 					UNUSED_PARAMETER(download_status);
 					obs_log(LOG_INFO, "Model downloaded: %s", path.c_str());
 					unpack_model(model_info, path);
+					// Update will initialize the model on the TTS context
+					squawk_data_->tts_context.model_name = "";
 					// update the source
 					obs_data_t *source_settings =
 						obs_source_get_settings(squawk_data_->context);
@@ -226,7 +229,6 @@ void squawk_source_update(void *data, obs_data_t *settings)
 		source = "";
 	}
 	squawk_data->inputThread->setOBSTextSource(source);
-
 	squawk_data->inputThread->setFile(obs_data_get_string(settings, "file"));
 
 	std::string new_model_name = obs_data_get_string(settings, "model");
