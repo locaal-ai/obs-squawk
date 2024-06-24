@@ -94,9 +94,11 @@ if(APPLE)
 else()
   install(FILES ${INSTALL_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}onnxruntime${CMAKE_SHARED_LIBRARY_SUFFIX}
           DESTINATION ${SHARED_LIBRARY_DESTINATION})
-  install(
-    FILES ${INSTALL_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}onnxruntime_providers_shared${CMAKE_SHARED_LIBRARY_SUFFIX}
-    DESTINATION ${SHARED_LIBRARY_DESTINATION})
+  if(WIN32)
+    install(
+      FILES ${INSTALL_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}onnxruntime_providers_shared${CMAKE_SHARED_LIBRARY_SUFFIX}
+      DESTINATION ${SHARED_LIBRARY_DESTINATION})
+  endif()
 endif()
 
 # Add the sherpa-onnx target with all the dependencies
