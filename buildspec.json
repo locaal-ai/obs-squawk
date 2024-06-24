@@ -38,11 +38,11 @@
     },
     "name": "obs-squawk",
     "displayName": "OBS Squawk Real-Time Text-to-Speech Plugin",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "author": "Roy Shilkrot",
     "website": "https://github.com/occ-ai/obs-squawk",
     "email": "roy.shil@gmail.com",
     "uuids": {
-        "windowsApp": "00000000-0000-0000-0000-000000000000"
+        "windowsApp": "437A31F8-9922-4942-BF16-2FC6AD533513"
     }
 }
