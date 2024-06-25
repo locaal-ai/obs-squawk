@@ -104,7 +104,7 @@ else()
       DESTINATION ${SHARED_LIBRARY_DESTINATION})
   endif()
   if(UNIX AND NOT APPLE)
-    install(FILES ${INSTALL_DIR}/lib/libpiper_phonemize.1.so ${INSTALL_DIR}/lib/libpiper_phonemize.1.2.0.so
+    install(FILES ${INSTALL_DIR}/lib/libpiper_phonemize.so.1 ${INSTALL_DIR}/lib/libpiper_phonemize.so.1.2.0
                   ${INSTALL_DIR}/lib/libonnxruntime.so.1.17.1 DESTINATION ${SHARED_LIBRARY_DESTINATION})
   endif()
 endif()
