@@ -32,13 +32,17 @@ set(SHERPA_LIBS
 if(NOT APPLE)
   list(APPEND SHERPA_LIBS piper_phonemize)
 endif()
+if(UNIX AND NOT APPLE)
+  list(APPEND SHERPA_LIBS cargs)
+  list(APPEND SHERPA_LIBS sherpa-onnx-portaudio)
+endif()
 
 if(WIN32)
   set(SHARED_LIBRARY_DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/obs-plugins/64bit)
 elseif(APPLE)
   set(SHARED_LIBRARY_DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/${PROJECT_NAME}.plugin/Contents/Frameworks)
 else()
-  set(SHARED_LIBRARY_DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/lib/x86_64-linux-gnu/obs-plugins)
+  set(SHARED_LIBRARY_DESTINATION ${CMAKE_BINARY_DIR}/release/$<CONFIG>/lib/x86_64-linux-gnu/obs-plugins)
 endif()
 
 foreach(lib ${SHERPA_LIBS})
@@ -98,6 +102,10 @@ else()
     install(
       FILES ${INSTALL_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}onnxruntime_providers_shared${CMAKE_SHARED_LIBRARY_SUFFIX}
       DESTINATION ${SHARED_LIBRARY_DESTINATION})
+  endif()
+  if(UNIX AND NOT APPLE)
+    install(FILES ${INSTALL_DIR}/lib/libpiper_phonemize.1.so ${INSTALL_DIR}/lib/libpiper_phonemize.1.2.0.so
+                  ${INSTALL_DIR}/lib/libonnxruntime.so.1.17.1 DESTINATION ${SHARED_LIBRARY_DESTINATION})
   endif()
 endif()
 
