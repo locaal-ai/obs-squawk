@@ -5,8 +5,8 @@
 #include "model-utils/model-find-utils.h"
 #include "plugin-support.h"
 #include "sherpa-tts/sherpa-tts.h"
-#include "squawk-source.h"
 #include "squawk-source-data.h"
+#include "squawk-source.h"
 #include "tts-utils.h"
 
 #include <new>
@@ -96,8 +96,8 @@ obs_properties_t *squawk_source_properties(void *data)
 	obs_properties_t *ppts = obs_properties_create();
 
 	// add model selection dropdown property
-	obs_property_t *model = obs_properties_add_list(ppts, "model", "Model", OBS_COMBO_TYPE_LIST,
-							OBS_COMBO_FORMAT_STRING);
+	obs_property_t *model = obs_properties_add_list(
+		ppts, "model", MT_("Model"), OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_STRING);
 	for (auto model_info : model_infos) {
 		obs_property_list_add_string(model, model_info.friendly_name.c_str(),
 					     model_info.local_folder_name.c_str());
@@ -141,24 +141,24 @@ obs_properties_t *squawk_source_properties(void *data)
 		data);
 
 	// add speaker id property
-	obs_properties_add_int(ppts, "speaker_id", "Speaker ID", 0, 100, 1);
+	obs_properties_add_int(ppts, "speaker_id", MT_("Speaker_ID"), 0, 100, 1);
 
 	// add input source selection dropdown property
 	obs_property_t *input_source = obs_properties_add_list(
 		ppts, "input_source", "Input Source", OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_STRING);
 	// Add "none" option
-	obs_property_list_add_string(input_source, obs_module_text("none_no_output"), "none");
+	obs_property_list_add_string(input_source, MT_("none_no_input"), "none");
 	// Add text sources
 	obs_enum_sources(add_sources_to_list, input_source);
 	// add file property
-	obs_properties_add_path(ppts, "file", "File", OBS_PATH_FILE, nullptr, nullptr);
+	obs_properties_add_path(ppts, "file", MT_("File"), OBS_PATH_FILE, nullptr, nullptr);
 
 	// add text property
-	obs_properties_add_text(ppts, "text", "Text", OBS_TEXT_DEFAULT);
+	obs_properties_add_text(ppts, "text", MT_("Text"), OBS_TEXT_DEFAULT);
 
 	// add button property for generating audio on demand
 	obs_properties_add_button(
-		ppts, "generate_audio", "Generate Audio",
+		ppts, "generate_audio", MT_("Generate_Audio"),
 		[](obs_properties_t *props, obs_property_t *property, void *data_) {
 			UNUSED_PARAMETER(props);
 			UNUSED_PARAMETER(property);
@@ -187,7 +187,7 @@ obs_properties_t *squawk_source_properties(void *data)
 
 	// add button for deleting all cached models
 	obs_properties_add_button(
-		ppts, "delete_models", "Delete Cached Models",
+		ppts, "delete_models", MT_("Delete_Cached_Models"),
 		[](obs_properties_t *props, obs_property_t *property, void *data_) {
 			UNUSED_PARAMETER(props);
 			UNUSED_PARAMETER(property);
@@ -205,7 +205,7 @@ obs_properties_t *squawk_source_properties(void *data)
 		});
 
 	// add boolean propery for enabling phonetic transcription
-	obs_properties_add_bool(ppts, "phonetic_transcription", "Phonetic Transcription");
+	obs_properties_add_bool(ppts, "phonetic_transcription", MT_("Phonetic_Transcription"));
 
 	// add plugin info
 	char small_info[256];
@@ -217,7 +217,7 @@ obs_properties_t *squawk_source_properties(void *data)
 
 void squawk_source_update(void *data, obs_data_t *settings)
 {
-	obs_log(LOG_INFO, "Squawk source update");
+	obs_log(LOG_DEBUG, "Squawk source update");
 
 	squawk_source_data *squawk_data = (squawk_source_data *)data;
 

@@ -4,6 +4,8 @@
 extern "C" {
 #endif
 
+#define MT_ obs_module_text
+
 const char *squawk_source_name(void *unused);
 void *squawk_source_create(obs_data_t *settings, obs_source_t *source);
 void squawk_source_destroy(void *data);
