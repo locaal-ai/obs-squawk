@@ -13,6 +13,12 @@
 The OBS Squawk plugin adds powerful voice cloning capabilities to OBS by leveraging sherpa-onnx. 
 With this plugin, you can generate speech on the fly and in real-time inside OBS without any external services or access to the network.
 
+<div align="center">
+    <a href="https://www.youtube.com/watch?v=xE41VQjTruA" target="_blank">
+        <img width="40%" src="https://github.com/occ-ai/obs-squawk/assets/441170/f627fc35-df8f-4ed9-ba99-205e04c3b7c0" />
+    </a>
+</div>
+
 ## Features
 
 - **OBS Audio Source**: Seamlessly integrates with OBS as an audio source.
