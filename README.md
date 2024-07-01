@@ -15,7 +15,8 @@ With this plugin, you can generate speech on the fly and in real-time inside OBS
 
 <div align="center">
     <a href="https://www.youtube.com/watch?v=xE41VQjTruA" target="_blank">
-        <img width="40%" src="https://github.com/occ-ai/obs-squawk/assets/441170/f627fc35-df8f-4ed9-ba99-205e04c3b7c0" />
+        <img width="40%" src="https://github.com/occ-ai/obs-squawk/assets/441170/f627fc35-df8f-4ed9-ba99-205e04c3b7c0" /><br/>
+        3 Minute Tutorial
     </a>
 </div>
 

@@ -38,7 +38,7 @@
     },
     "name": "obs-squawk",
     "displayName": "OBS Squawk Real-Time Text-to-Speech Plugin",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "author": "Roy Shilkrot",
     "website": "https://github.com/occ-ai/obs-squawk",
     "email": "roy.shil@gmail.com",
