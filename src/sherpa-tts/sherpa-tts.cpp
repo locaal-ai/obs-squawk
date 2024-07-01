@@ -6,19 +6,36 @@
 
 #include <obs-module.h>
 
-void generate_audio_from_text(sherpa_tts_context &ctx, const char *text, int speaker_id)
+void generate_audio_from_text(sherpa_tts_context &ctx, const std::string &text, uint32_t speaker_id,
+			      float speed)
 {
-	if (ctx.tts == nullptr) {
+	if (ctx.tts == nullptr || !ctx.initialized || text.empty() ||
+	    ctx.audio_callback == nullptr || speed <= 0.0f) {
 		return;
 	}
 
-	const SherpaOnnxGeneratedAudio *audio =
-		SherpaOnnxOfflineTtsGenerate(ctx.tts, text, speaker_id, 1.0);
+	if (ctx.num_speakers == 0) {
+		obs_log(LOG_WARNING, "No speakers found in the model. Assuming speaker id 0.");
+		speaker_id = 0;
+	} else if (speaker_id < 0 || speaker_id >= ctx.num_speakers) {
+		obs_log(LOG_WARNING, "Speaker id %d is out of range (0 -> %d), using speaker id 0",
+			speaker_id, ctx.num_speakers - 1);
+		speaker_id = 0;
+	}
 
-	// Call the audio callback function with the generated audio samples
-	ctx.audio_callback(ctx.callback_data, audio->samples, audio->n, audio->sample_rate);
+	try {
+		obs_log(LOG_DEBUG, "Generating audio from text: %s, speaker_id: %d, speed: %f",
+			text.c_str(), speaker_id, speed);
+		const SherpaOnnxGeneratedAudio *audio =
+			SherpaOnnxOfflineTtsGenerate(ctx.tts, text.c_str(), speaker_id, speed);
 
-	SherpaOnnxDestroyOfflineTtsGeneratedAudio(audio);
+		// Call the audio callback function with the generated audio samples
+		ctx.audio_callback(ctx.callback_data, audio->samples, audio->n, audio->sample_rate);
+
+		SherpaOnnxDestroyOfflineTtsGeneratedAudio(audio);
+	} catch (const std::exception &e) {
+		obs_log(LOG_ERROR, "Error generating audio from text: %s", e.what());
+	}
 }
 
 void init_sherpa_tts_context(sherpa_tts_context &context,
@@ -66,6 +83,8 @@ void init_sherpa_tts_context(sherpa_tts_context &context,
 	context.tts = SherpaOnnxCreateOfflineTts(&config);
 	context.audio_callback = audio_callback;
 	context.callback_data = data;
+	context.num_speakers = std::max(1, SherpaOnnxOfflineTtsNumSpeakers(context.tts));
+	context.initialized = true;
 }
 
 void destroy_sherpa_tts_context(sherpa_tts_context &context)

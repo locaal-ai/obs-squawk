@@ -18,6 +18,8 @@ void InputThread::run()
 	while (running) {
 		obs_log(LOG_DEBUG, "Input thread checking for changes");
 
+		std::string new_content_for_generation;
+
 		// Monitor files for changes
 		if (!file.empty()) {
 			// Check if file has changed
@@ -37,9 +39,7 @@ void InputThread::run()
 			}
 			if (fileContents != lastFileValue) {
 				// Invoke speech generation if it has changed
-				if (speechGenerationCallback) {
-					speechGenerationCallback(fileContents);
-				}
+				new_content_for_generation = fileContents;
 				lastFileValue = fileContents;
 			}
 		}
@@ -58,14 +58,21 @@ void InputThread::run()
 					obs_data_release(sourceSettings);
 					if (text && lastOBSTextSourceValue != text) {
 						// Invoke speech generation if it has changed
-						if (speechGenerationCallback) {
-							speechGenerationCallback(text);
-						}
+						new_content_for_generation = text;
 						lastOBSTextSourceValue = text;
 					}
 				}
 				obs_source_release(source);
 			}
+		}
+
+		if (!new_content_for_generation.empty() && speechGenerationCallback) {
+			std::thread generationThread([this, new_content_for_generation]() {
+				obs_log(LOG_DEBUG, "Generating speech from input: %s",
+					new_content_for_generation.c_str());
+				speechGenerationCallback(new_content_for_generation);
+			});
+			generationThread.detach();
 		}
 
 		// Sleep for a certain interval before checking again
