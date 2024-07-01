@@ -17,7 +17,7 @@ void generate_audio_from_text(sherpa_tts_context &ctx, const std::string &text, 
 	if (ctx.num_speakers == 0) {
 		obs_log(LOG_WARNING, "No speakers found in the model. Assuming speaker id 0.");
 		speaker_id = 0;
-	} else if (speaker_id < 0 || speaker_id >= ctx.num_speakers) {
+	} else if (speaker_id >= ctx.num_speakers) {
 		obs_log(LOG_WARNING, "Speaker id %d is out of range (0 -> %d), using speaker id 0",
 			speaker_id, ctx.num_speakers - 1);
 		speaker_id = 0;
