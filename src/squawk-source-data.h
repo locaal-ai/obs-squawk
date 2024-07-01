@@ -14,7 +14,8 @@ struct squawk_source_data {
 	sherpa_tts_context tts_context;
 	std::unique_ptr<InputThread> inputThread;
 
-	int speaker_id;
+	uint32_t speaker_id;
+	float speed;
 	bool phonetic_transcription;
 
 	squawk_source_data() { context = nullptr; }

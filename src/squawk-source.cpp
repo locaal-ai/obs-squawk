@@ -47,8 +47,8 @@ void *squawk_source_create(obs_data_t *settings, obs_source_t *source)
 			if (squawk_data->phonetic_transcription) {
 				transformed_text = phonetic_transcription(text);
 			}
-			generate_audio_from_text(squawk_data->tts_context, transformed_text.c_str(),
-						 squawk_data->speaker_id);
+			generate_audio_from_text(squawk_data->tts_context, transformed_text,
+						 squawk_data->speaker_id, squawk_data->speed);
 		});
 	squawk_data->inputThread->start();
 
@@ -70,6 +70,7 @@ void squawk_source_destroy(void *data)
 void squawk_source_defaults(obs_data_t *settings)
 {
 	obs_data_set_default_int(settings, "speaker_id", 0);
+	obs_data_set_default_double(settings, "speed", 1.0);
 	obs_data_set_default_string(settings, "text", "Hello, World!");
 	obs_data_set_default_string(settings, "model", "vits-coqui-en-vctk");
 	obs_data_set_default_string(settings, "input_source", "none");
@@ -143,6 +144,9 @@ obs_properties_t *squawk_source_properties(void *data)
 	// add speaker id property
 	obs_properties_add_int(ppts, "speaker_id", MT_("Speaker_ID"), 0, 100, 1);
 
+	// add a speed slider between 0.1 and 2.5
+	obs_properties_add_float_slider(ppts, "speed", MT_("Speed"), 0.1, 2.5, 0.1);
+
 	// add input source selection dropdown property
 	obs_property_t *input_source = obs_properties_add_list(
 		ppts, "input_source", "Input Source", OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_STRING);
@@ -179,8 +183,8 @@ obs_properties_t *squawk_source_properties(void *data)
 					original_text.c_str(), text.c_str());
 			}
 
-			generate_audio_from_text(squawk_data_->tts_context, text.c_str(),
-						 speaker_id);
+			generate_audio_from_text(squawk_data_->tts_context, text, speaker_id,
+						 squawk_data_->speed);
 
 			return true;
 		});
@@ -221,7 +225,8 @@ void squawk_source_update(void *data, obs_data_t *settings)
 
 	squawk_source_data *squawk_data = (squawk_source_data *)data;
 
-	squawk_data->speaker_id = (int)obs_data_get_int(settings, "speaker_id");
+	squawk_data->speaker_id = (uint32_t)obs_data_get_int(settings, "speaker_id");
+	squawk_data->speed = (float)obs_data_get_double(settings, "speed");
 	squawk_data->phonetic_transcription = obs_data_get_bool(settings, "phonetic_transcription");
 
 	std::string source = obs_data_get_string(settings, "input_source");
