@@ -42,7 +42,7 @@ if(WIN32)
 elseif(APPLE)
   set(SHARED_LIBRARY_DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/${PROJECT_NAME}.plugin/Contents/Frameworks)
 else()
-  set(SHARED_LIBRARY_DESTINATION ${CMAKE_SOURCE_DIR}/release/$<CONFIG>/lib/x86_64-linux-gnu/obs-plugins)
+  set(SHARED_LIBRARY_DESTINATION ${CMAKE_INSTALL_LIBDIR}/obs-plugins)
 endif()
 
 foreach(lib ${SHERPA_LIBS})
