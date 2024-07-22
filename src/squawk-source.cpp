@@ -75,6 +75,7 @@ void squawk_source_defaults(obs_data_t *settings)
 	obs_data_set_default_string(settings, "model", "vits-coqui-en-vctk");
 	obs_data_set_default_string(settings, "input_source", "none");
 	obs_data_set_default_string(settings, "file", "");
+	obs_data_set_default_bool(settings, "line_by_line", false);
 	obs_data_set_default_bool(settings, "phonetic_transcription", true);
 }
 
@@ -82,7 +83,8 @@ bool add_sources_to_list(void *list_property, obs_source_t *source)
 {
 	auto source_id = obs_source_get_id(source);
 	if (strcmp(source_id, "text_ft2_source_v2") != 0 &&
-	    strcmp(source_id, "text_gdiplus_v2") != 0) {
+	    strcmp(source_id, "text_gdiplus_v2") != 0 &&
+	    strcmp(source_id, "text_gdiplus_v3") != 0) {
 		return true;
 	}
 
@@ -156,6 +158,11 @@ obs_properties_t *squawk_source_properties(void *data)
 	obs_enum_sources(add_sources_to_list, input_source);
 	// add file property
 	obs_properties_add_path(ppts, "file", MT_("File"), OBS_PATH_FILE, nullptr, nullptr);
+	// add line-by-line boolean property
+	obs_properties_add_bool(ppts, "line_by_line", MT_("Line_By_Line"));
+	// add help text for line-by-line
+	obs_property_set_long_description(obs_properties_get(ppts, "line_by_line"),
+					  MT_("line_by_line_help"));
 
 	// add text property
 	obs_properties_add_text(ppts, "text", MT_("Text"), OBS_TEXT_DEFAULT);
@@ -235,6 +242,9 @@ void squawk_source_update(void *data, obs_data_t *settings)
 	}
 	squawk_data->inputThread->setOBSTextSource(source);
 	squawk_data->inputThread->setFile(obs_data_get_string(settings, "file"));
+	squawk_data->inputThread->setReadingMode(obs_data_get_bool(settings, "line_by_line")
+							 ? ReadingMode::LineByLine
+							 : ReadingMode::Whole);
 
 	std::string new_model_name = obs_data_get_string(settings, "model");
 	if (new_model_name != squawk_data->tts_context.model_name) {

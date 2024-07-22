@@ -7,6 +7,8 @@
 #include <string>
 #include <functional>
 
+enum class ReadingMode { Whole, LineByLine };
+
 class InputThread {
 public:
 	InputThread();
@@ -29,6 +31,8 @@ public:
 	}
 
 	void setFile(const std::string &filePath) { file = filePath; }
+	void setReadingMode(ReadingMode mode) { readingMode = mode; }
+	void setInterval(uint32_t milliseconds) { interval = milliseconds; }
 
 	void setOBSTextSource(const std::string &sourceName) { obsTextSource = sourceName; }
 
@@ -46,6 +50,7 @@ private:
 	uint32_t interval = 1000;
 	std::string lastFileValue;
 	std::string lastOBSTextSourceValue;
+	ReadingMode readingMode = ReadingMode::Whole;
 
 	void run();
 };

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
+#include <sstream>
 
 #include <obs.h>
 
@@ -30,11 +31,12 @@ void InputThread::run()
 			if (std::filesystem::exists(filePath)) {
 				std::ifstream fileStream(filePath);
 				if (fileStream.is_open()) {
-					std::string line;
-					while (std::getline(fileStream, line)) {
-						fileContents += line;
-					}
+					std::stringstream buffer;
+					buffer << fileStream.rdbuf();
+					fileContents = buffer.str();
 					fileStream.close();
+				} else {
+					obs_log(LOG_ERROR, "Failed to open file: %s", file.c_str());
 				}
 			}
 			if (fileContents != lastFileValue) {
@@ -70,7 +72,17 @@ void InputThread::run()
 			std::thread generationThread([this, new_content_for_generation]() {
 				obs_log(LOG_DEBUG, "Generating speech from input: %s",
 					new_content_for_generation.c_str());
-				speechGenerationCallback(new_content_for_generation);
+				if (this->readingMode == ReadingMode::LineByLine) {
+					// Split the input into lines and generate speech for each line
+					std::istringstream iss(new_content_for_generation);
+					std::string line;
+					while (std::getline(iss, line)) {
+						this->speechGenerationCallback(line);
+					}
+					return;
+				} else {
+					speechGenerationCallback(new_content_for_generation);
+				}
 			});
 			generationThread.detach();
 		}
