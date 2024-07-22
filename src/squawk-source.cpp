@@ -77,6 +77,7 @@ void squawk_source_defaults(obs_data_t *settings)
 	obs_data_set_default_string(settings, "file", "");
 	obs_data_set_default_bool(settings, "line_by_line", false);
 	obs_data_set_default_bool(settings, "phonetic_transcription", true);
+	obs_data_set_default_bool(settings, "input_debounce", true);
 }
 
 bool add_sources_to_list(void *list_property, obs_source_t *source)
@@ -144,25 +145,34 @@ obs_properties_t *squawk_source_properties(void *data)
 		data);
 
 	// add speaker id property
-	obs_properties_add_int(ppts, "speaker_id", MT_("Speaker_ID"), 0, 100, 1);
+	obs_properties_add_int(ppts, "speaker_id", MT_("Speaker_ID"), 0, 1000, 1);
 
 	// add a speed slider between 0.1 and 2.5
 	obs_properties_add_float_slider(ppts, "speed", MT_("Speed"), 0.1, 2.5, 0.1);
 
+	// add "inputs" group
+	obs_properties_t *inputs_group = obs_properties_create();
+	obs_properties_add_group(ppts, "inputs", MT_("Inputs"), OBS_GROUP_NORMAL, inputs_group);
 	// add input source selection dropdown property
-	obs_property_t *input_source = obs_properties_add_list(
-		ppts, "input_source", "Input Source", OBS_COMBO_TYPE_LIST, OBS_COMBO_FORMAT_STRING);
+	obs_property_t *input_source = obs_properties_add_list(inputs_group, "input_source",
+							       "Input Source", OBS_COMBO_TYPE_LIST,
+							       OBS_COMBO_FORMAT_STRING);
 	// Add "none" option
 	obs_property_list_add_string(input_source, MT_("none_no_input"), "none");
 	// Add text sources
 	obs_enum_sources(add_sources_to_list, input_source);
 	// add file property
-	obs_properties_add_path(ppts, "file", MT_("File"), OBS_PATH_FILE, nullptr, nullptr);
+	obs_properties_add_path(inputs_group, "file", MT_("File"), OBS_PATH_FILE, nullptr, nullptr);
 	// add line-by-line boolean property
-	obs_properties_add_bool(ppts, "line_by_line", MT_("Line_By_Line"));
+	obs_property_t *lbl_prop =
+		obs_properties_add_bool(inputs_group, "line_by_line", MT_("Line_By_Line"));
 	// add help text for line-by-line
-	obs_property_set_long_description(obs_properties_get(ppts, "line_by_line"),
-					  MT_("line_by_line_help"));
+	obs_property_set_long_description(lbl_prop, MT_("line_by_line_help"));
+	// add boolean property for enabling input debounce
+	obs_property_t *debouce_prop =
+		obs_properties_add_bool(inputs_group, "input_debounce", MT_("Input_Debounce"));
+	// add help text for input debounce
+	obs_property_set_long_description(debouce_prop, MT_("input_debounce_help"));
 
 	// add text property
 	obs_properties_add_text(ppts, "text", MT_("Text"), OBS_TEXT_DEFAULT);
@@ -245,6 +255,9 @@ void squawk_source_update(void *data, obs_data_t *settings)
 	squawk_data->inputThread->setReadingMode(obs_data_get_bool(settings, "line_by_line")
 							 ? ReadingMode::LineByLine
 							 : ReadingMode::Whole);
+	squawk_data->inputThread->setDebounceMode(obs_data_get_bool(settings, "input_debounce")
+							  ? DebouceMode::Debounced
+							  : DebouceMode::Immediate);
 
 	std::string new_model_name = obs_data_get_string(settings, "model");
 	if (new_model_name != squawk_data->tts_context.model_name) {

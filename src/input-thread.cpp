@@ -12,7 +12,22 @@
 
 #include "plugin-support.h"
 
-InputThread::InputThread() : running(false), interval(1000) {}
+namespace {
+uint64_t now_ms()
+{
+	return std::chrono::duration_cast<std::chrono::milliseconds>(
+		       std::chrono::system_clock::now().time_since_epoch())
+		.count();
+}
+} // namespace
+
+InputThread::InputThread()
+	: running(false),
+	  interval(1000),
+	  lastChangeTimeFile(now_ms()),
+	  lastChangeTimeSource(now_ms())
+{
+}
 
 void InputThread::run()
 {
@@ -40,9 +55,9 @@ void InputThread::run()
 				}
 			}
 			if (fileContents != lastFileValue) {
-				// Invoke speech generation if it has changed
 				new_content_for_generation = fileContents;
-				lastFileValue = fileContents;
+				this->lastFileValue = fileContents;
+				this->lastChangeTimeFile = now_ms();
 			}
 		}
 
@@ -59,12 +74,29 @@ void InputThread::run()
 						obs_data_get_string(sourceSettings, "text");
 					obs_data_release(sourceSettings);
 					if (text && lastOBSTextSourceValue != text) {
-						// Invoke speech generation if it has changed
 						new_content_for_generation = text;
-						lastOBSTextSourceValue = text;
+						this->lastOBSTextSourceValue = text;
+						this->lastChangeTimeSource = now_ms();
 					}
 				}
 				obs_source_release(source);
+			}
+		}
+
+		if (debounceMode == DebouceMode::Debounced) {
+			// If debounce mode is enabled, wait for a certain interval before
+			// generating speech
+			uint64_t currentTime = now_ms();
+			uint64_t timeSinceLastChangeFile = currentTime - lastChangeTimeFile;
+			uint64_t timeSinceLastChangeSource = currentTime - lastChangeTimeSource;
+			if (timeSinceLastChangeFile > interval &&
+			    timeSinceLastChangeFile < (interval * 2)) {
+				new_content_for_generation = lastFileValue;
+			} else if (timeSinceLastChangeSource > interval &&
+				   timeSinceLastChangeSource < (interval * 2)) {
+				new_content_for_generation = lastOBSTextSourceValue;
+			} else {
+				new_content_for_generation.clear();
 			}
 		}
 

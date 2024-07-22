@@ -8,6 +8,7 @@
 #include <functional>
 
 enum class ReadingMode { Whole, LineByLine };
+enum class DebouceMode { Debounced, Immediate };
 
 class InputThread {
 public:
@@ -33,6 +34,7 @@ public:
 	void setFile(const std::string &filePath) { file = filePath; }
 	void setReadingMode(ReadingMode mode) { readingMode = mode; }
 	void setInterval(uint32_t milliseconds) { interval = milliseconds; }
+	void setDebounceMode(DebouceMode mode) { debounceMode = mode; }
 
 	void setOBSTextSource(const std::string &sourceName) { obsTextSource = sourceName; }
 
@@ -51,6 +53,10 @@ private:
 	std::string lastFileValue;
 	std::string lastOBSTextSourceValue;
 	ReadingMode readingMode = ReadingMode::Whole;
+	DebouceMode debounceMode = DebouceMode::Debounced;
+	uint64_t lastChangeTimeFile = 0;
+	uint64_t lastChangeTimeSource = 0;
+	bool debounceGenerated = false;
 
 	void run();
 };
