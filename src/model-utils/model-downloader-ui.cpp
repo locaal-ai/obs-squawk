@@ -74,6 +74,9 @@ void ModelDownloader::close()
 {
 	this->mPrepareToClose = true;
 
+	// Stop the thread
+	this->download_thread->quit();
+
 	QDialog::close();
 }
 
