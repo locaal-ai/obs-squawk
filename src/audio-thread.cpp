@@ -54,7 +54,7 @@ void AudioThread::emitFromBuffer()
 	}
 
 	// if needed - pad the samples with silence to reach the target batch size
-	while (samples.size() < target_number_of_samples) {
+	while ((int)samples.size() < target_number_of_samples) {
 		samples.push_back(0.0f);
 	}
 
