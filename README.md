@@ -1,4 +1,6 @@
-# OBS Squawk - Real-time Versatile Text-to-Speech Source
+# ⚠️ Stalled ⚠️ This project is not under active development
+
+## OBS Squawk - Real-time Versatile Text-to-Speech Source
 
 <div align="center">
 
