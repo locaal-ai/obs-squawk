@@ -4,11 +4,10 @@
 
 <div align="center">
 
-[![GitHub](https://img.shields.io/github/license/occ-ai/obs-squawk)](https://github.com/occ-ai/obs-squawl/blob/main/LICENSE)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/occ-ai/obs-squawk/push.yaml)](https://github.com/occ-ai/obs-squawk/actions/workflows/push.yaml)
-[![Total downloads](https://img.shields.io/github/downloads/occ-ai/obs-squawk/total)](https://github.com/occ-ai/obs-squawk/releases)
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/occ-ai/obs-squawk)](https://github.com/occ-ai/obs-squawk/releases)
-[![Discord](https://img.shields.io/discord/1200229425141252116)](https://discord.gg/KbjGU2vvUz)
+[![GitHub](https://img.shields.io/github/license/locaal-ai/obs-squawk)](https://github.com/locaal-ai/obs-squawl/blob/main/LICENSE)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/locaal-ai/obs-squawk/push.yaml)](https://github.com/locaal-ai/obs-squawk/actions/workflows/push.yaml)
+[![Total downloads](https://img.shields.io/github/downloads/locaal-ai/obs-squawk/total)](https://github.com/locaal-ai/obs-squawk/releases)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/locaal-ai/obs-squawk)](https://github.com/locaal-ai/obs-squawk/releases)
 
 </div>
 
@@ -163,11 +162,3 @@ This project is licensed under the GPLv2 License - see the [LICENSE](LICENSE) fi
 ## Acknowledgements
 
 - [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) for providing the underlying voice synthesis technology and pretrained models.
-
-## Support
-
-For support and troubleshooting, please visit our [GitHub Issues](https://github.com/occ-ai/obs-squawk/issues) page or reach out on [our Discord server](https://discord.gg/s5K9RwPV7w).
-
----
-
-Thank you for using the OBS Squawk Plugin! Enhance your streams with the power of voice cloning.
